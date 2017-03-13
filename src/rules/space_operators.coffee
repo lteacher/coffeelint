@@ -8,8 +8,11 @@ module.exports = class SpaceOperators
             This rule enforces that operators have spaces around them.
             '''
 
-    tokens: ['+', '-', '=', '**', 'MATH', 'COMPARE', 'LOGIC', 'COMPOUND_ASSIGN',
-        'STRING_START', 'STRING_END', 'CALL_START', 'CALL_END']
+    tokens: [
+        '+', '-', '=', '**', 'MATH', 'COMPARE', 'LOGIC', 'COMPOUND_ASSIGN',
+        'STRING_START', 'STRING_END', 'CALL_START', 'CALL_END',
+        '&&', '|', '||', '&'
+    ]
 
     constructor: ->
         @callTokens = []    # A stack tracking the call token pairs.
@@ -39,14 +42,18 @@ module.exports = class SpaceOperators
             return null
 
         p = tokenApi.peek(-1)
+
         unaries = ['TERMINATOR', '(', '=', '-', '+', ',', 'CALL_START',
                     'INDEX_START', '..', '...', 'COMPARE', 'IF',
                     'THROW', 'LOGIC', 'POST_IF', ':', '[', 'INDENT',
-                    'COMPOUND_ASSIGN', 'RETURN', 'MATH', 'BY', 'LEADING_WHEN']
+                    'COMPOUND_ASSIGN', 'RETURN', 'MATH', 'BY', 'LEADING_WHEN',
+                    '&&', '||']
+
         isUnary = if not p then false else p[0] in unaries
-        if (isUnary and token.spaced?) or
+        notFirstToken = (p or token.spaced? or token.newLine)
+        if notFirstToken and ((isUnary and token.spaced?) or
                 (not isUnary and not token.newLine and
-                (not token.spaced or (p and not p.spaced)))
+                (not token.spaced or (p and not p.spaced))))
             return { context: token[1] }
         else
             null
