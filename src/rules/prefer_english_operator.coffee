@@ -11,7 +11,9 @@ module.exports = class PreferEnglishOperator
             !! for converting to a boolean is ignored.
             '''
 
-    tokens: ['COMPARE', 'UNARY_MATH', 'LOGIC']
+    # NOTE: once we stop supporting any 1.x version, feel free to remove
+    # LOGIC token types since they don't seem to exist anymore.
+    tokens: ['COMPARE', 'UNARY_MATH', '&&', '||', 'LOGIC']
 
     lintToken: (token, tokenApi) ->
         config = tokenApi.config[@rule.name]
